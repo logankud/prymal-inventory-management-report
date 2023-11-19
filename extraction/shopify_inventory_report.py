@@ -187,7 +187,7 @@ def generate_daily_run_rate(selected_value):
     daily_run_rate = ['forecast_daily', lower_bound,upper_bound]
     
     # Consolidate into dataframe
-    df = pd.DataFrame(daily_run_rate,
+    df = pd.DataFrame([daily_run_rate],
                 columns=['forecast','lower_bound','upper_bound'])
     
     # Append product name & sku
