@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '**/create_table/shipbob_inventory/**'
+      - '**/workflows/create_shopify_inventory_report.yml'
       
 
 jobs:
