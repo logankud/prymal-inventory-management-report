@@ -3,12 +3,12 @@ run-name: ${{ github.actor }} - CREATE TABLE - shipbob_inventory
 on: 
   push:
     paths:
-      - '**/create_table/shipbob_inventory/**'
+      - '**/create_table/shopify_inventory/**'
       - '**/workflows/create_shopify_inventory_report.yml'
       
 
 jobs:
-  create_shipbob_inventory:
+  create_shopify_inventory:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo code
@@ -26,10 +26,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r create_table/requirements.txt
     
-      - name: CREATE TABLE - shipbob_inventory
+      - name: CREATE TABLE - shopify_inventory
         env: 
           AWS_ACCESS_KEY:  ${{ secrets.AWS_ACCESS_KEY }}
           AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
-        run: python create_table/shipbob_inventory/create_table.py 
+        run: python create_table/shopify_inventory/create_table.py 
 
       - run: echo "Job status - ${{ job.status }}."
