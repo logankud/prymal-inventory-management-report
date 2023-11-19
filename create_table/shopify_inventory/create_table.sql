@@ -1,6 +1,5 @@
 CREATE EXTERNAL TABLE IF NOT EXISTS shopify_inventory_report(
-
-sku INT
+sku STRING
 , sku_name STRING
 , forecast STRING
 , lower_bound DOUBLE

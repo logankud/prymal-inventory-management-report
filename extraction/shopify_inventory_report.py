@@ -198,7 +198,7 @@ def generate_daily_run_rate(selected_value):
     df['partition_date'] = pd.to_datetime(pd.to_datetime('today') - timedelta(1)).strftime('%Y-%m-%d')
 
 
-    return df[['partition_date','sku','sku_name','forecast','lower_bound','upper_bound']]
+    return df[['sku','sku_name','forecast','lower_bound','upper_bound','partition_date']]
 
 
 # Check S3 Path for Existing Data
@@ -215,7 +215,7 @@ def check_path_for_objects(bucket: str, s3_prefix:str):
                           aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 
   # List objects in s3_prefix
-  result = s3_client.list_objects_v2(Bucket=bucket, Prefix=s3_prefix )
+  result = s3_client.list_objects_v2(Bucket=bucket, Prefix=s3_prefix)
 
   # Instantiate objects_exist
   objects_exist=False
@@ -461,7 +461,7 @@ inventory_details_df = product_run_rate_df.merge(inventory_df,
 inventory_details_df['days_of_stock_onhand'] = round(inventory_details_df['inventory_on_hand'] / inventory_details_df['upper_bound'],0).astype(int)
 
 
-
+inventory_details_df = inventory_details_df[['sku','sku_name','forecast','lower_bound','upper_bound','days_of_stock_onhand','partition_date']]
 
 # Create s3 client
 s3_client = boto3.client('s3', 
