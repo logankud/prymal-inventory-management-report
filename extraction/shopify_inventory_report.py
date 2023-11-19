@@ -461,7 +461,7 @@ inventory_details_df = product_run_rate_df.merge(inventory_df,
 inventory_details_df['days_of_stock_onhand'] = round(inventory_details_df['inventory_on_hand'] / inventory_details_df['upper_bound'],0).astype(int)
 
 
-inventory_details_df = inventory_details_df[['sku','sku_name','forecast','lower_bound','upper_bound','days_of_stock_onhand','partition_date']]
+inventory_details_df = inventory_details_df[['sku','sku_name','forecast','lower_bound','upper_bound','inventory_on_hand','days_of_stock_onhand','partition_date']]
 
 # Create s3 client
 s3_client = boto3.client('s3', 
