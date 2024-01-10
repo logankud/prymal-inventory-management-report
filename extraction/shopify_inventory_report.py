@@ -457,8 +457,11 @@ inventory_details_df = product_run_rate_df.merge(inventory_df,
                 how='left',
                 on=['partition_date', 'sku'])
 
+
 # Calculate days of stock on hand given the inventory on hand and daily run rate
-inventory_details_df.loc[~inventory_details_df['upper_bound'].isna(),'days_of_stock_onhand'] = round(inventory_details_df.loc[~inventory_details_df['upper_bound'].isna(),'inventory_on_hand'] / inventory_details_df.loc[~inventory_details_df['upper_bound'].isna(),'upper_bound'],0).astype(int)
+
+
+inventory_details_df.loc[~inventory_details_df['upper_bound'].isna(),'days_of_stock_onhand'] = round(inventory_details_df.loc[~inventory_details_df['upper_bound'].isna(),'inventory_on_hand'].fillna(0) / inventory_details_df.loc[~inventory_details_df['upper_bound'].isna(),'upper_bound'].fillna(0),0).astype(int)
 
 # Replace nulls with 0
 inventory_details_df['days_of_stock_onhand'].fillna(0)
