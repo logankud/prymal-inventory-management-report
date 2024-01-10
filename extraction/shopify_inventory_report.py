@@ -142,16 +142,16 @@ def run_athena_query(query:str, database: str, region:str):
         # Handle any other unexpected exceptions
 
 
-def generate_daily_run_rate(selected_value):
+def generate_daily_run_rate(daily_qty_sold_df: pd.DataFrame, sku_value:str):
 
-    logger.info(f'UPDATING FORECAST TABLE - {selected_value}')
+    logger.info(f'UPDATING FORECAST TABLE - {sku_value}')
 
     # DAILY QTY SOLD
     # -----
 
     # Calculate daily dataframe
-    daily_df = result_df.loc[result_df['sku_name']==selected_value].sort_values('order_date',ascending=False)
-    product_sku = daily_df['sku'].unique().tolist()[0]
+    daily_df = daily_qty_sold_df.loc[daily_qty_sold_df['sku']==sku_value].sort_values('order_date',ascending=False)
+    sku_name = daily_df['sku_name'].unique().tolist()[0]
 
     # Calculate statistics for past 7, 14, 30 & 60 days
     last_7_median = daily_df.head(7)['qty_sold'].median()
@@ -191,8 +191,8 @@ def generate_daily_run_rate(selected_value):
                 columns=['forecast','lower_bound','upper_bound'])
     
     # Append product name & sku
-    df['sku'] = product_sku
-    df['sku_name'] = selected_value
+    df['sku'] = sku_value
+    df['sku_name'] = sku_name
 
     # Set partition date to yesterday (data as of yesterday)
     df['partition_date'] = pd.to_datetime(pd.to_datetime('today') - timedelta(1)).strftime('%Y-%m-%d')
@@ -428,23 +428,23 @@ inventory_df['inventory_on_hand'] = inventory_df['inventory_on_hand'].astype(int
 
 
 
-# List of products to forecast stockout dates for 
-PRODUCT_LIST = ['Salted Caramel - Large Bag (320 g)',
-                'Cacao Mocha - Large Bag (320 g)',
-                'Original - Large Bag (320 g)',
-                'Vanilla Bean - Large Bag (320 g)',
-                'Butter Pecan - Large Bag (320 g)',
-                'Cinnamon Dolce - Large Bag (320 g)']
+# # List of products to forecast stockout dates for 
+# PRODUCT_LIST = ['Salted Caramel - Large Bag (320 g)',
+#                 'Cacao Mocha - Large Bag (320 g)',
+#                 'Original - Large Bag (320 g)',
+#                 'Vanilla Bean - Large Bag (320 g)',
+#                 'Butter Pecan - Large Bag (320 g)',
+#                 'Cinnamon Dolce - Large Bag (320 g)']
 
 
 # Blank df to store results
 product_run_rate_df = pd.DataFrame()
 
 # For each sku in products list, generate forecast using recent sales data
-for p in PRODUCT_LIST:
+for sku in result_df['sku'].unique():
 
     # Generate daily run rates for the product
-    df = generate_daily_run_rate(p)
+    df = generate_daily_run_rate(daily_qty_sold_df=result_df, sku_value=sku)
 
     # Append to run rate dataframe
     product_run_rate_df = pd.concat([product_run_rate_df,df])
